@@ -18,12 +18,12 @@ Il sistema descrive l'implementazione di una pipeline dati completa, dal rilevam
 | **Database** | AWS DynamoDB | Archiviazione NoSQL scalabile |
 
 ## Specifiche tecniche dei componenti
-
 ### Sensore Pluviometrico
 
 ### HummBox
 
-### TTN
+### The Things Network
+The Things Network è il portale che si occupa di ricevere, interpretare ed inoltrare i pacchetti
 
 ### AWS API Gateway
 
@@ -59,3 +59,35 @@ sequenceDiagram
 
   Note right of DB: Dato pronto per Dashboard
 ```
+## Architettura del sistema
+### Sensore Pluviometrico
+
+### HummBox
+
+### The Things Network (TTN)
+The Things Network è il portale che si occupa di ricevere, interpretare ed inoltrare i pacchetti.
+Dopo essersi registrati è stata creata l'applicazione "Sensore Pluviometrico" ed è stato registrato l'end device.
+
+Per la registrazione dell'end device è necessario impostare i seguenti parametri:
+
+| Parametro | Struttura | Significato |
+| :--- | :--- | :--- |
+| **App EUI** | 8 byte esadecimali | Identifica in modo univoco l'applicazione |
+| **Dev EUI** | 8 byte esadecimali | Identifica in modo univoco l'end device |
+| **App Key** | 16 byte esadecimali | Chiave di sicurezza per crittografare i dati durante la trasmissione |
+
+Così facendo ogni pacchetto inviato dalla HummBox verrà visualizzato sul portale TTN sotto forma di file JSON.
+
+Il payload del pacchetto dati che riceveremo è composto da 5 byte:
+
+| Byte 0 | Byte 1 | Byte 2 | Byte 3 | Byte 4 |
+| :--- | :--- | :--- | :--- | :--- |
+| Tipo di pacchetto | Contatore (LSB) | Contatore (MSB) | Temperatura? | Batteria |
+
+Nella sezione Payload Formatter di TTN è possibile scrivere il codice per interpretare il pacchetto appena viene ricevuto, il risultato di questa lettura viene collocato in un file JSON.
+
+### AWS API Gateway
+
+### AWS Lambda
+
+### Database
