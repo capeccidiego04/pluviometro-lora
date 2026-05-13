@@ -14,9 +14,8 @@ def lambda_handler(event, context):
         decoded = uplink_message.get('decoded_payload')
 
         if not decoded or decoded.get('key') != 'humm' or decoded.get('status') != 16:
-            print("Pacchetto scartato: Messaggio tecnico o chiave errata.")
             return {
-                'statusCode': 200, # Rispondiamo 200 per non far riprovare TTN
+                'statusCode': 200, # 200 non fa riprovare l'invio da parte di ttn
                 'body': json.dumps('Messaggio non applicativo ignorato')
             }
 
