@@ -95,3 +95,46 @@ Il linguaggio di programmazione scelto è Python 3.14
 
 ### DynamoDB
 È un servizio di storage NoSQL di tipo `chiave-valore`, completamente gestito, interrogabile e facilmente scalabile.
+
+## Sfide Tecniche
+Il maggior problema durante lo sviluppo è stato causato dall'assenza di un Gateway dedicato.
+Facendo affidamento ad un Gateway pubblico è sensibilmente più difficile la ricezione del messaggio da parte del Gateway, ci sono 3 parametri che descrivono la qualità del segnale dopo la trasmissione:
+### Reciver Signal Strength Indicator (RSSI):
+Indica la misura della potenza totale del segnale ricevuto dal Gateway.
+
+Indice dei valori:
+* Ottimo: da -30dBm a -70dBm
+* Buono: da -70dBm a -90dBm
+* Sufficiente: da -90dBm a -110dBm
+* Critico: da -110dBm in poi
+
+Il valore medio rilevato nelle misurazioni è -108.9dBm.
+
+### Signal To Noise Ratio (SNR)
+Indica il rapporto tra la potenza del segnale utile e il rumore di fondo.
+
+Indice dei valori:
+* Ottimo: superiore a +5dB
+* Buono: tra +5dB e -10dB
+* Limite: tra -10dB e -20dB
+* Inutilizzabile: sotto i -20dB
+
+Il valore medio rilevato nelle misurazioni è -16.15dB.
+
+### Spreading Factor (SF)
+Definisce il numero di variazioni di frequenza utilizzati per codificare ogni bit di informazione.
+
+Indice dei valori:
+* Ottimo: SF7 o SF8
+* Medio: SF9 o SF10
+* Limite: SF11 o SF12
+
+Il valore medio rilevato nelle misurazioni è SF12
+
+### Considerazioni
+La HummBox deve potenziare molto il segnale trasmesso, questo comporta un aumento del consumo della batteria e la possibilità di pacchetti persi.
+
+Una possibile soluzione sarebbe quella di configurare ed utilizzare un proprio Gateway, garantendo una maggiore stabilità del segnale e un minor consumo di batteria.
+
+## Risultati
+FIDATI
