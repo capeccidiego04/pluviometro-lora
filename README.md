@@ -22,15 +22,6 @@ Il sistema descrive l'implementazione di una pipeline dati completa, dal rilevam
 
 ### HummBox
 
-### The Things Network
-The Things Network è il portale che si occupa di ricevere, interpretare ed inoltrare i pacchetti
-
-### AWS API Gateway
-
-### AWS Lambda
-
-### Database
-
 ## Flusso dei dati
 ```mermaid
 sequenceDiagram
@@ -60,9 +51,10 @@ sequenceDiagram
   Note right of DB: Dato pronto per Dashboard
 ```
 ## Architettura del sistema
-### Sensore Pluviometrico
-
-### HummBox
+### Livello Fisico
+Il sensore pluviometrico viene connesso attraverso un connettore M12 alla HummBox.
+La HummBox presenta un'antenna, usata per trasmettere il dato al primo Gateway disponibile.
+Questa infrastruttura si appoggia a Gateway pubblici, il protocollo LoRa, infatti, permette ad un qualunque Gateway di trasmettere in rete i segnali ricevuti da diversi End Device, anche se non appartenenti alla stessa applicazione.
 
 ### The Things Network (TTN)
 The Things Network è il portale che si occupa di ricevere, interpretare ed inoltrare i pacchetti.
@@ -87,7 +79,19 @@ Il payload del pacchetto dati che riceveremo è composto da 5 byte:
 Nella sezione Payload Formatter di TTN è possibile scrivere il codice per interpretare il pacchetto appena viene ricevuto, il risultato di questa lettura viene collocato in un file JSON.
 
 ### AWS API Gateway
+È un servizio PaaS (Platform as a Service) che consente la creazione, protezione e gestione di interfacce di programmazione verso endpoint backend diversificati.
+Per questa appicazione è stato scelto il paradigma HTTP APIs, il flusso dei dati è il seguente:
+| Fase | Descrizione |
+| :--- | :--- |
+| Preparazione dati | TTN genera un payload JSON dopo aver decodificato il payload |
+| Invocazione WebHook | TTN esegue una richiesta `POST` verso l'URL pubblico esposto da AWS API Gateway |
+| Validazione Dati | Ricevuta la richiesta HTTPS, API Gateway controlla la validità dei certificati SSL/TLS |
+| BackEnd | Il dato viene elaborato dal servizio BackEnd |
+| Acknowledge | API Gateway restituisce a TTN il codice di validazione `200`, confermando la ricezione | 
 
 ### AWS Lambda
+È un servizio di calcolo Serverless, permette di eseguire del codice in seguito ad una chiamata, senza la necessità di dover gestire l'infrastruttura fisica di un server.
+Il linguaggio di programmazione scelto è Python 3.14
 
-### Database
+### DynamoDB
+È un servizio di storage NoSQL di tipo `chiave-valore`, completamente gestito, interrogabile e facilmente scalabile.
