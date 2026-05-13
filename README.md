@@ -1,4 +1,4 @@
-# pluviometro-lora
+# Pluviometro-LoRa
 > Architettura di un sistema di monitoraggio pluviometrico IoT su protocollo LoRaWan e Architettura Serverless AWS
 
 1) Introduzione
@@ -8,6 +8,7 @@
 
 ## Introduzione
 Il sistema descrive l'implementazione di una pipeline dati completa, dal rilevamento fisico delle precipitazioni alla persistenza dei dati elaborati
+
 | Componente | Tecnologia/Modello | Ruolo |
 | :--- | :--- | :--- |
 | **Sensore** | Davis Instruments | Rilevazione millimetrica delle precipitazioni |
@@ -53,14 +54,17 @@ sequenceDiagram
 ## Architettura del sistema
 ### Livello Fisico
 Il sensore pluviometrico viene connesso attraverso un connettore M12 alla HummBox.
+
 La HummBox presenta un'antenna, usata per trasmettere il dato al primo Gateway disponibile.
+
 Questa infrastruttura si appoggia a Gateway pubblici, il protocollo LoRa, infatti, permette ad un qualunque Gateway di trasmettere in rete i segnali ricevuti da diversi End Device, anche se non appartenenti alla stessa applicazione.
 
 ### The Things Network (TTN)
 The Things Network è il portale che si occupa di ricevere, interpretare ed inoltrare i pacchetti.
-Dopo essersi registrati è stata creata l'applicazione "Sensore Pluviometrico" ed è stato registrato l'end device.
 
-Per la registrazione dell'end device è necessario impostare i seguenti parametri:
+Dopo essersi registrati è stata creata l'applicazione "Sensore Pluviometrico" ed è stato registrato l'end device scegliendo un ID.
+
+Per la registrazione dell'end device è necessario impostare i seguenti parametri per riconoscere l'end device:
 
 | Parametro | Struttura | Significato |
 | :--- | :--- | :--- |
@@ -68,15 +72,22 @@ Per la registrazione dell'end device è necessario impostare i seguenti parametr
 | **Dev EUI** | 8 byte esadecimali | Identifica in modo univoco l'end device |
 | **App Key** | 16 byte esadecimali | Chiave di sicurezza per crittografare i dati durante la trasmissione |
 
+Altre configurazioni relative all'End Device comprendono:
+* Frequency Plan: `Europe 863-870 MHz (SF9 for RX2)`
+* LoRaWAN Version: `LoRaWAN Specification 1.0.2`
+* Regional Parameters Version: `RP001 Regional Parameters 1.0.2`
+
 Così facendo ogni pacchetto inviato dalla HummBox verrà visualizzato sul portale TTN sotto forma di file JSON.
 
 Il payload del pacchetto dati che riceveremo è composto da 5 byte:
 
 | Byte 0 | Byte 1 | Byte 2 | Byte 3 | Byte 4 |
 | :--- | :--- | :--- | :--- | :--- |
-| Tipo di pacchetto | Contatore (LSB) | Contatore (MSB) | Temperatura? | Batteria |
+| Tipo di pacchetto | Contatore (LSB) | Contatore (MSB) | Temperatura? | Batteria (%) |
 
 Nella sezione Payload Formatter di TTN è possibile scrivere il codice per interpretare il pacchetto appena viene ricevuto, il risultato di questa lettura viene collocato in un file JSON.
+
+Il linguaggio scelto per la scrittura del Payload Formatter è il JavaScript
 
 ### AWS API Gateway
 È un servizio PaaS (Platform as a Service) che consente la creazione, protezione e gestione di interfacce di programmazione verso endpoint backend diversificati.
@@ -91,10 +102,15 @@ Per questa appicazione è stato scelto il paradigma HTTP APIs, il flusso dei dat
 
 ### AWS Lambda
 È un servizio di calcolo Serverless, permette di eseguire del codice in seguito ad una chiamata, senza la necessità di dover gestire l'infrastruttura fisica di un server.
+
 Il linguaggio di programmazione scelto è Python 3.14
 
 ### DynamoDB
-È un servizio di storage NoSQL di tipo `chiave-valore`, completamente gestito, interrogabile e facilmente scalabile.
+È un servizio di storage NoSQL completamente gestito, interrogabile e facilmente scalabile.
+
+Vengono impostate:
+* Chiave di partizione: `dev_id`, cioè l'ID assegnato al dispositivo nel portale TTN
+* Chiave di ordinamento: `timestamp`, cioè la data e l'ora di arrivo del dato, utile per ordinare i dati in ordine cronologico
 
 ## Sfide Tecniche
 Il maggior problema durante lo sviluppo è stato causato dall'assenza di un Gateway dedicato.
@@ -134,7 +150,17 @@ Il valore medio rilevato nelle misurazioni è SF12
 ### Considerazioni
 La HummBox deve potenziare molto il segnale trasmesso, questo comporta un aumento del consumo della batteria e la possibilità di pacchetti persi.
 
-Una possibile soluzione sarebbe quella di configurare ed utilizzare un proprio Gateway, garantendo una maggiore stabilità del segnale e un minor consumo di batteria.
+L'aumento del consumo della batteria potrebbe portare ad un reset del dispositivo, dai log ricavati durante le misure si nota un valore del parametro `f_cnt`, un contatore incrementale di sicurezza, che tende a tornare a 0 dopo del tempo. 
+
+Associato a questo evento c'è anche il cambio del `DevAddr`, un identificativo univoco associato dinamicamente al sensore all'interno della rete LoRaWAN
+
+Avendo riscontrato uno Spreading Factor pari a 12 troviamo che il segnale ha un tempo di volo di circa 1.4s, per tutto questo tempo il chip radio presente nella HummBox richiede il massimo della potenza dalla batteria.
+
+Potrebbe verificarsi un calo di tensione tale che la HummBox si resetti, perdendo così tutti i valori salvati in RAM.
+
+Una possibile conseguenza è la presenza di errori nella misura, in quanto il dato immagazzinato viene perso in seguito ad un reset del dispositivo.
+
+Una soluzione sarebbe quella di configurare ed utilizzare un proprio Gateway, garantendo una maggiore stabilità del segnale e un minor consumo di batteria.
 
 ## Risultati
 FIDATI
