@@ -152,7 +152,7 @@ La HummBox deve potenziare molto il segnale trasmesso, questo comporta un aument
 
 L'aumento del consumo della batteria potrebbe portare ad un reset del dispositivo, dai log ricavati durante le misure si nota un valore del parametro `f_cnt`, un contatore incrementale di sicurezza, che tende a tornare a 0 dopo del tempo. 
 
-Associato a questo evento c'è anche il cambio del `DevAddr`, un identificativo univoco associato dinamicamente al sensore all'interno della rete LoRaWAN
+Associato a questo evento c'è anche il cambio del `DevAddr`, un identificativo univoco associato dinamicamente al sensore all'interno della rete LoRaWAN che conferma l'ipotesi di un reset.
 
 Avendo riscontrato uno Spreading Factor pari a 12 troviamo che il segnale ha un tempo di volo di circa 1.4s, per tutto questo tempo il chip radio presente nella HummBox richiede il massimo della potenza dalla batteria.
 
