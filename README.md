@@ -85,6 +85,8 @@ Il payload del pacchetto dati che riceveremo è composto da 5 byte:
 | :--- | :--- | :--- | :--- | :--- |
 | Tipo di pacchetto | Contatore (LSB) | Contatore (MSB) | Temperatura? | Batteria (%) |
 
+I pacchetti che contengono dati da salvare nel Database hanno il valore del Byte 0 pari a `0x10`
+
 Nella sezione Payload Formatter di TTN è possibile scrivere il codice per interpretare il pacchetto appena viene ricevuto, il risultato di questa lettura viene collocato in un file JSON.
 
 Il linguaggio scelto per la scrittura del Payload Formatter è il JavaScript
