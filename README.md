@@ -45,7 +45,7 @@ sequenceDiagram
 
   activate AWS
   AWS->>AWS: Decoding & Parsing
-  AWS->>+DB: PutItem (Persistenza)
+  AWS->>+DB: Inserimento dati
   DB-->>-AWS: 200 OK
   deactivate AWS
 
