@@ -79,7 +79,7 @@ Altre configurazioni relative all'End Device comprendono:
 
 Così facendo ogni pacchetto inviato dalla HummBox verrà visualizzato sul portale TTN sotto forma di file JSON.
 
-Il payload del pacchetto dati che riceveremo è composto da 5 byte:
+Riceveremo diversi tipi di pacchetti di diverse lunghezze, nello specifico il payload del pacchetto contenente i dati della misurazione è composto da 5 byte:
 
 | Byte 0 | Byte 1 | Byte 2 | Byte 3 | Byte 4 |
 | :--- | :--- | :--- | :--- | :--- |
@@ -89,7 +89,7 @@ I pacchetti che contengono dati da salvare nel Database hanno il valore del Byte
 
 Nella sezione Payload Formatter di TTN è possibile scrivere il codice per interpretare il pacchetto appena viene ricevuto, il risultato di questa lettura viene collocato in un file JSON.
 
-Il linguaggio scelto per la scrittura del Payload Formatter è il JavaScript
+Il linguaggio scelto per la scrittura del Payload Formatter è il JavaScript.
 
 ### AWS API Gateway
 È un servizio PaaS (Platform as a Service) che consente la creazione, protezione e gestione di interfacce di programmazione verso endpoint backend diversificati.
