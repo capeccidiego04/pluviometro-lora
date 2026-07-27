@@ -13,9 +13,10 @@ def lambda_handler(event, context):
         uplink_message = body.get('uplink_message', {})
         decoded = uplink_message.get('decoded_payload')
 
-        if not decoded or decoded.get('key') != 'humm' or decoded.get('status') != 16:
+        if not decoded or decoded.get('key') != 'humm' or (decoded.get('status') != 16 and decoded.get('status') != 18):
+            print("Pacchetto scartato: Messaggio tecnico o chiave errata.")
             return {
-                'statusCode': 200, # 200 non fa riprovare l'invio da parte di ttn
+                'statusCode': 200, # Rispondiamo 200 per non far riprovare TTN
                 'body': json.dumps('Messaggio non applicativo ignorato')
             }
 
@@ -25,8 +26,6 @@ def lambda_handler(event, context):
         rain_total = float(decoded.get('rain_mm') or 0)
 
         battery_hex = str(decoded.get('battery_hex') or 0)
-
-        cumulative_pulses = int(decoded.get('cumulative_pulses') or 0)
 
         response = table.query(
             KeyConditionExpression=Key('dev_id').eq(device_id),
@@ -38,21 +37,16 @@ def lambda_handler(event, context):
 
         if items:
             rain_total_vecchio = float(items[0]['rain_total'])
-            if rain_total >= rain_total_vecchio:
-                rain_delta = rain_total - rain_total_vecchio
-            elif (rain_total_vecchio-rain_total)<10:
-                rain_delta = 0
-            else:
-                rain_delta = rain_total
+            rain_new = rain_total_vecchio + rain_total
         else:
-            rain_delta = 0
+            rain_new = rain_total
     
         table.put_item(
                 Item={
                     'dev_id': device_id,
                     'timestamp': timestamp,
-                    'rain_total': str(rain_total),
-                    'rain_delta': str(round(rain_delta, 2)),
+                    'rain_total': str(round(rain_new, 2)),
+                    'rain_delta': str(round(rain_total, 2)),
                     'battery_hex': str(battery_hex),
                     'processed_at': str(datetime.now())
                 }
