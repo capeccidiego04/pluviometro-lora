@@ -39,5 +39,20 @@ Per configurare il Gateway LoRa:
 
 ## AWS
 ### AWS API Gateway
-  - Importare il file di configurazione dell'API contenuto in questa repository.
-  - Dal sito TTN inserire un nuovo WebHook di tipo JSON con il BaseURL strutturato così: `URL_FORNITO_DA_AWS/dati`
+Importare il file di configurazione dell'API contenuto in questa repository.
+
+Dal sito TTN inserire un nuovo WebHook di tipo JSON con il BaseURL strutturato così: `URL_FORNITO_DA_AWS/dati`
+
+### AWS DynamoDB
+Creare una nuova tabella e impostare:
+  - Chiave di partizione: `dev_id`
+  - Chiave di ordinamento: `timestamp`
+
+### AWS Lambda
+Creare una nuova funzione e importare il codice contenuto in questa repository.
+
+In seguito eseguire il *Deploy*
+
+Nella sezione *Configurazione* accedere alla voce *Trigger* ed impostare come Trigger il Gateway API creato precedentemente.
+
+Sempre nella sezione *Configurazione* accedere alla voce *Autorizzazioni*, creare quindi un *Ruolo di esecuzione* che fornisca ad AWS Lambda il permesso `AmazonDynamoDBFullAccess`
