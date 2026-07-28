@@ -1,0 +1,38 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "pluviometro-webhook",
+    "version" : "2026-05-03 15:01:55UTC"
+  },
+  "servers" : [ {
+    "url" : "https://vwf3br16rb.execute-api.eu-north-1.amazonaws.com/{basePath}",
+    "variables" : {
+      "basePath" : {
+        "default" : ""
+      }
+    }
+  } ],
+  "tags" : [ {
+    "name" : "Progetto",
+    "x-amazon-apigateway-tag-value" : "Pluviometro"
+  } ],
+  "paths" : {
+    "/dati" : {
+      "post" : {
+        "responses" : {
+          "default" : {
+            "description" : "Default response for POST /dati"
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "payloadFormatVersion" : "2.0",
+          "type" : "aws_proxy",
+          "httpMethod" : "POST",
+          "uri" : "arn:aws:apigateway:eu-north-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-north-1:059325866319:function:pluviometro-ttn/invocations",
+          "connectionType" : "INTERNET"
+        }
+      }
+    }
+  },
+  "x-amazon-apigateway-importexport-version" : "1.0"
+}
