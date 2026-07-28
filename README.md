@@ -35,7 +35,9 @@ In seguito accedere alla sezione *Payload Formatter* e caricare il codice conten
 Per configurare il Gateway LoRa:
   - Accedere al portale `https://rg1xx??????.local`, al posto dei punti interrogativi inserire gli ultimi 6 caratteri del MAC Address presente sul retro del dispositivo
   - Dalla sezione *Impostazioni* caricare la configurazione contenuta in questa repository
+  - Dal sito TTN impostare un nuovo Gateway caricando la configurazione contenuta in questa repository.
 
 ## AWS
 ### AWS API Gateway
-  - Creare una nuova *API HTTP* 
+  - Importare il file di configurazione dell'API contenuto in questa repository.
+  - Dal sito TTN inserire un nuovo WebHook di tipo JSON con il BaseURL strutturato così: `URL_FORNITO_DA_AWS/dati`
